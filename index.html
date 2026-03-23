@@ -3,419 +3,592 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>我的博客</title>
-  <meta name="description" content="一个简洁、干净、适合部署到 GitHub Pages 的个人博客首页。" />
+  <title>Ark-303的博客</title>
+  <meta name="description" content="一个偏星空史诗风格的原创静态博客首页，适合 GitHub Pages 部署。" />
   <style>
-    :root {
-      --bg: #f5f7fb;
-      --card: rgba(255, 255, 255, 0.9);
-      --text: #1f2937;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --accent: #2563eb;
-      --accent-2: #1d4ed8;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      --radius: 20px;
-      --max: 1100px;
+    :root{
+      --bg:#040611;
+      --bg2:#07101f;
+      --panel:rgba(10,16,29,.72);
+      --line:rgba(185,210,255,.15);
+      --text:#eef4ff;
+      --muted:#98a7c2;
+      --blue:#79b8ff;
+      --violet:#b78cff;
+      --gold:#f7d38a;
+      --shadow:0 22px 70px rgba(0,0,0,.5);
+      --radius:24px;
+      --max:1180px;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
       background:
-        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 30%),
-        radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 30%),
-        var(--bg);
-      color: var(--text);
-      line-height: 1.7;
+        radial-gradient(circle at 20% 18%, rgba(121,184,255,.14), transparent 24%),
+        radial-gradient(circle at 80% 12%, rgba(183,140,255,.12), transparent 22%),
+        radial-gradient(circle at 50% 82%, rgba(247,211,138,.08), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(circle at 12px 16px, rgba(255,255,255,.9) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 40px 56px, rgba(255,255,255,.6) 0 1px, transparent 1.6px);
+      background-size:72px 72px;
+      opacity:.28;
+      z-index:0;
+      animation: starDrift 120s linear infinite;
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg, transparent 0%, rgba(121,184,255,.05) 50%, transparent 100%);
+      opacity:.35;
+      z-index:0;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{
+      position:relative;
+      z-index:1;
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+    }
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:blur(18px);
+      background:rgba(4,6,17,.66);
+      border-bottom:1px solid rgba(185,210,255,.12);
+    }
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:18px 0;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+    }
+    .sigil{
+      width:18px;height:18px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #fff, var(--blue) 45%, transparent 72%);
+      box-shadow:0 0 22px rgba(121,184,255,.8), 0 0 42px rgba(183,140,255,.35);
+      animation: pulse 4s ease-in-out infinite;
+    }
+    .nav-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:22px;
+      color:var(--muted);
+      font-size:.96rem;
+    }
+    .nav-links a{
+      position:relative;
+      transition:.2s ease;
+    }
+    .nav-links a::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:-4px;
+      width:0;
+      height:1px;
+      background:linear-gradient(90deg,var(--blue),var(--violet),var(--gold));
+      transition:width .25s ease;
+    }
+    .nav-links a:hover{color:#fff}
+    .nav-links a:hover::after{width:100%}
+
+    .hero{padding:72px 0 26px}
+    .grid{
+      display:grid;
+      grid-template-columns:1.35fr .85fr;
+      gap:22px;
+    }
+    .panel{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+      border:1px solid rgba(185,210,255,.14);
+      background:linear-gradient(180deg, rgba(13,20,36,.84), rgba(8,12,24,.66));
+      box-shadow:var(--shadow);
+    }
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.08) 50%, transparent 100%);
+      transform:translateX(-120%);
+      animation:sweep 9s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .hero-main{
+      min-height:400px;
+      padding:42px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      width:fit-content;
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(121,184,255,.22);
+      background:rgba(121,184,255,.08);
+      color:#d8e8ff;
+      font-size:.88rem;
+      font-weight:700;
+      margin-bottom:18px;
+    }
+    .badge i{
+      width:8px;height:8px;border-radius:999px;
+      background:var(--gold);
+      box-shadow:0 0 14px rgba(247,211,138,.9);
+      display:inline-block;
+    }
+    h1{
+      margin:0 0 16px;
+      font-size:clamp(2.4rem, 5vw, 5.1rem);
+      line-height:1.03;
+      letter-spacing:-.06em;
+      max-width:12ch;
+    }
+    .star-text{
+      background:linear-gradient(90deg,#fff, var(--blue) 35%, #e8d4ff 60%, var(--gold));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      position:relative;
+      display:inline-block;
+    }
+    .star-text::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:.08em;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+      opacity:.7;
+      animation: shimmer 5s ease-in-out infinite;
+    }
+    p{
+      margin:0;
+      max-width:62ch;
+      color:var(--muted);
+      line-height:1.9;
+      font-size:1.02rem;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:28px;
+    }
+    .btn{
+      position:relative;
+      overflow:hidden;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:13px 18px;
+      border-radius:16px;
+      border:1px solid transparent;
+      font-weight:800;
+      transition:.25s ease;
+    }
+    .btn::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.16) 50%, transparent 100%);
+      transform:translateX(-120%);
+      transition:transform .7s ease;
+    }
+    .btn:hover::after{transform:translateX(120%)}
+    .primary{
+      color:#09111d;
+      background:linear-gradient(135deg, #fff, #cfe0ff 34%, #b8d3ff 62%, #ffe5a7);
+      box-shadow:0 12px 32px rgba(121,184,255,.14);
+    }
+    .secondary{
+      color:#eef4ff;
+      background:rgba(12,18,32,.92);
+      border-color:rgba(185,210,255,.18);
+    }
+    .btn:hover{transform:translateY(-2px)}
+
+    .hero-side{
+      padding:22px;
+      display:grid;
+      gap:14px;
+    }
+    .card{
+      position:relative;
+      overflow:hidden;
+      padding:18px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(14,22,40,.9), rgba(14,22,40,.58));
+      border:1px solid rgba(185,210,255,.14);
+      transition:transform .25s ease, border-color .25s ease;
+    }
+    .card:hover{
+      transform:translateY(-3px);
+      border-color:rgba(121,184,255,.26);
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:auto -10% -35% -10%;
+      height:70%;
+      background:radial-gradient(circle, rgba(183,140,255,.16), transparent 55%);
+      animation: drift 7s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .metric{
+      display:block;
+      font-size:1.7rem;
+      margin-bottom:6px;
+      background:linear-gradient(90deg,#fff,var(--blue),var(--violet),var(--gold));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .card span{color:var(--muted);font-size:.95rem;line-height:1.7}
+
+    section{padding:18px 0 42px}
+    .section{
+      padding:28px;
+    }
+    .head{
+      display:flex;
+      justify-content:space-between;
+      gap:18px;
+      align-items:flex-end;
+      margin-bottom:22px;
+    }
+    .head h2{
+      margin:0;
+      font-size:1.45rem;
+      letter-spacing:-.02em;
+    }
+    .head span{color:var(--muted);font-size:.95rem}
+
+    .posts{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+    .post{
+      overflow:hidden;
+      border-radius:22px;
+      background:linear-gradient(180deg, rgba(13,20,36,.95), rgba(7,10,18,.92));
+      border:1px solid rgba(185,210,255,.14);
+      box-shadow:0 16px 36px rgba(0,0,0,.24);
+      transition:transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+    }
+    .post:hover{
+      transform:translateY(-6px);
+      border-color:rgba(247,211,138,.25);
+      box-shadow:0 20px 48px rgba(0,0,0,.34);
+    }
+    .cover{
+      height:176px;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(121,184,255,.95), transparent 22%),
+        radial-gradient(circle at 78% 20%, rgba(183,140,255,.8), transparent 24%),
+        radial-gradient(circle at 50% 82%, rgba(247,211,138,.75), transparent 26%),
+        linear-gradient(135deg, #09101d, #05070f 60%, #020308);
+    }
+    .cover::before{
+      content:"";
+      position:absolute;
+      inset:-25%;
+      background:
+        conic-gradient(from 180deg, transparent, rgba(255,255,255,.10), transparent 35%);
+      animation: rotate 14s linear infinite;
+      opacity:.7;
+    }
+    .cover::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,.04), rgba(0,0,0,.2)),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.1), transparent 42%);
+      opacity:.5;
+    }
+    .constellation{
+      position:absolute;
+      inset:0;
+      opacity:.75;
+    }
+    .star{
+      position:absolute;
+      width:4px;height:4px;border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 10px rgba(255,255,255,.9);
+      animation: twinkle 3.5s ease-in-out infinite;
+    }
+    .line{
+      position:absolute;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      transform-origin:left center;
+      opacity:.6;
     }
 
-    a {
-      color: inherit;
+    .post-body{padding:18px 18px 20px}
+    .meta{
+      color:#a3b5d8;
+      font-size:.86rem;
+      margin-bottom:8px;
+      letter-spacing:.02em;
+    }
+    .post h3{
+      margin:0 0 10px;
+      font-size:1.12rem;
+      line-height:1.35;
+    }
+    .post p{
+      font-size:.95rem;
+      line-height:1.78;
+      color:var(--muted);
+    }
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+    .tag{
+      font-size:.8rem;
+      padding:5px 10px;
+      border-radius:999px;
+      color:#d6e4ff;
+      border:1px solid rgba(121,184,255,.18);
+      background:rgba(121,184,255,.08);
+    }
+
+    .about{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:18px;
+    }
+    .box{
+      padding:22px;
+      border-radius:20px;
+      border:1px solid rgba(185,210,255,.14);
+      background:linear-gradient(180deg, rgba(12,19,34,.86), rgba(12,19,34,.58));
+    }
+    .box h3{margin:0 0 10px;font-size:1.05rem}
+    .box p{margin:0}
+    .timeline{
+      display:grid;
+      gap:14px;
+      color:var(--muted);
+    }
+    .item{
+      position:relative;
+      padding-left:18px;
+      line-height:1.7;
+    }
+    .item::before{
+      content:"";
+      position:absolute;
+      left:0;top:.6em;
+      width:8px;height:8px;border-radius:999px;
+      background:linear-gradient(135deg,var(--blue),var(--violet),var(--gold));
+      box-shadow:0 0 16px rgba(121,184,255,.7);
+    }
+
+    footer{
+      padding:28px 0 54px;
+      color:var(--muted);
+      text-align:center;
+      font-size:.95rem;
+    }
+
+    .nebula{
+      position:fixed;
+      pointer-events:none;
+      border-radius:999px;
+      filter:blur(10px);
+      opacity:.55;
+      z-index:0;
+    }
+    .n1{width:280px;height:280px;left:-90px;top:16%;background:rgba(121,184,255,.10);animation: drift 18s ease-in-out infinite}
+    .n2{width:340px;height:340px;right:-140px;top:38%;background:rgba(183,140,255,.08);animation: drift 22s ease-in-out infinite reverse}
+    .n3{width:220px;height:220px;left:16%;bottom:-70px;background:rgba(247,211,138,.08);animation: drift 16s ease-in-out infinite}
+
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.28);opacity:.76}}
+    @keyframes sweep{0%,45%{transform:translateX(-120%);opacity:0}55%{opacity:1}100%{transform:translateX(120%);opacity:0}}
+    @keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(18px,-16px,0) scale(1.08)}}
+    @keyframes shimmer{0%,100%{opacity:.3;transform:scaleX(.82)}50%{opacity:.95;transform:scaleX(1.08)}}
+    @keyframes twinkle{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+    @keyframes starDrift{from{transform:translateY(0)}to{transform:translateY(-220px)}}
+
+    @media (max-width: 920px){
+      .grid,.posts,.about{grid-template-columns:1fr}
+      .hero{padding-top:48px}
+      .hero-main{min-height:auto}
+    }
+    @media (max-width: 640px){
+      .nav{flex-direction:column;align-items:flex-start}
+      .section,.hero-main{padding:22px}
+      .head{flex-direction:column;align-items:flex-start}
+      h1{max-width:none}
+    }
+    .site-link {
+      color: var(--muted);
       text-decoration: none;
+      transition: color 0.25s ease, text-shadow 0.25s ease;
+      border-bottom: 1px solid transparent;
     }
 
-    .container {
-      width: min(100% - 32px, var(--max));
-      margin: 0 auto;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(16px);
-      background: rgba(245, 247, 251, 0.75);
-      border-bottom: 1px solid rgba(229, 231, 235, 0.7);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 0;
-      gap: 16px;
-    }
-
-    .brand {
-      font-size: 1.2rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
-    .brand span {
-      color: var(--accent);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      font-size: 0.95rem;
-      color: var(--muted);
-    }
-
-    .nav-links a:hover {
-      color: var(--accent);
-    }
-
-    .hero {
-      padding: 72px 0 40px;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 0.8fr;
-      gap: 24px;
-      align-items: stretch;
-    }
-
-    .hero-main,
-    .hero-side,
-    .section-card,
-    .post-card {
-      background: var(--card);
-      border: 1px solid rgba(229, 231, 235, 0.8);
-      box-shadow: var(--shadow);
-      border-radius: var(--radius);
-    }
-
-    .hero-main {
-      padding: 34px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--accent);
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    h1 {
-      margin: 0 0 14px;
-      font-size: clamp(2rem, 5vw, 3.8rem);
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-    }
-
-    .hero p {
-      margin: 0 0 22px;
-      color: var(--muted);
-      font-size: 1.05rem;
-      max-width: 60ch;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 14px;
-      font-weight: 700;
-      border: 1px solid transparent;
-      transition: 0.2s ease;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-2);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--text);
-      border-color: var(--line);
-    }
-
-    .btn-secondary:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .hero-side {
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .stat {
-      padding: 18px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(37, 99, 235, 0.06), rgba(255, 255, 255, 0.7));
-      border: 1px solid rgba(229, 231, 235, 0.8);
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 1.5rem;
-      margin-bottom: 6px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    section {
-      padding: 18px 0 40px;
-    }
-
-    .section-card {
-      padding: 28px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .section-title h2 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
-
-    .section-title span {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    .posts {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .post-card {
-      overflow: hidden;
-    }
-
-    .post-cover {
-      height: 160px;
-      background:
-        linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(59, 130, 246, 0.75)),
-        url("https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1200&q=80");
-      background-size: cover;
-      background-position: center;
-    }
-
-    .post-body {
-      padding: 18px;
-    }
-
-    .post-meta {
-      color: var(--muted);
-      font-size: 0.88rem;
-      margin-bottom: 8px;
-    }
-
-    .post-body h3 {
-      margin: 0 0 10px;
-      font-size: 1.15rem;
-    }
-
-    .post-body p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.96rem;
-    }
-
-    .tags {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .tag {
-      font-size: 0.82rem;
-      padding: 5px 10px;
-      border-radius: 999px;
-      background: #eff6ff;
-      color: var(--accent);
-      border: 1px solid #dbeafe;
-    }
-
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .about-box {
-      background: rgba(255, 255, 255, 0.75);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 22px;
-    }
-
-    .about-box h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-
-    .about-box p {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    footer {
-      padding: 30px 0 50px;
-      color: var(--muted);
-      text-align: center;
-      font-size: 0.95rem;
-    }
-
-    @media (max-width: 900px) {
-      .hero-grid,
-      .posts,
-      .about-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        padding-top: 48px;
-      }
+    .site-link:hover {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+      text-shadow: 0 0 10px rgba(247, 211, 138, 0.45);
     }
   </style>
 </head>
 <body>
+  <div class="nebula n1"></div>
+  <div class="nebula n2"></div>
+  <div class="nebula n3"></div>
+
   <header>
-    <div class="container nav">
-      <div class="brand">我的<span>博客</span></div>
+    <div class="wrap nav">
+      <div class="brand"><span class="sigil"></span><div>Stellar<span style="color:var(--blue)">Myth</span></div></div>
       <nav class="nav-links">
-        <a href="#posts">文章</a>
-        <a href="#about">关于</a>
-        <a href="#contact">联系</a>
+        <a href="#posts">篇章</a>
+        <a href="#about">星图</a>
+        <a href="#contact">坐标</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
+  <main class="wrap">
     <section class="hero">
-      <div class="hero-grid">
-        <div class="hero-main">
-          <div class="badge">HTML + CSS 静态博客</div>
-          <h1>写下想法，整理生活，记录成长。</h1>
+      <div class="grid">
+        <div class="panel hero-main">
+          <div class="badge"><i></i> CELESTIAL ARCHIVE // STATIC SITE</div>
+          <h1><span class="star-text">把星辰</span><br/>写成仍在呼吸的史诗。</h1>
           <p>
-            这是一个可以直接部署到 GitHub Pages 的博客首页模板。
-            结构清晰、响应式布局、无需 JavaScript，也适合后续扩展成多页面博客。
+            这个版本更偏星空史诗：有缓慢漂移的星云、柔和的光晕、星座线条和轻微闪烁。
+            整体气质更神秘、更辽阔，适合做成创作博客、世界观档案或个人叙事主页。
           </p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#posts">浏览文章</a>
-            <a class="btn btn-secondary" href="#about">了解博客</a>
+          <div class="actions">
+            <a class="btn primary" href="#posts">进入星图</a>
+            <a class="btn secondary" href="#about">查看设定</a>
           </div>
         </div>
 
-        <aside class="hero-side">
-          <div class="stat">
-            <strong>12+</strong>
-            <span>篇精选文章占位</span>
+        <aside class="panel hero-side">
+          <div class="card">
+            <strong class="metric">ORBIT</strong>
+            <span>缓慢漂浮的星云层与柔光，让页面有宇宙空间感。</span>
           </div>
-          <div class="stat">
-            <strong>100%</strong>
-            <span>纯静态部署，GitHub Pages 可直接运行</span>
+          <div class="card">
+            <strong class="metric">CONSTELLATION</strong>
+            <span>星点与线段组合成“星座”式装饰图形，增强原创感。</span>
           </div>
-          <div class="stat">
-            <strong>SEO</strong>
-            <span>已加入基础标题和描述</span>
+          <div class="card">
+            <strong class="metric">EPOCH</strong>
+            <span>纯 HTML + CSS，由catgpt制成（暂时）</span>
           </div>
         </aside>
       </div>
     </section>
 
     <section id="posts">
-      <div class="section-card">
-        <div class="section-title">
-          <h2>最新文章</h2>
-          <span>你可以把这里替换成真实内容</span>
+      <div class="panel section">
+        <div class="head">
+          <h2>最新篇章</h2>
+          <span>会写的会写的（小声）</span>
         </div>
 
         <div class="posts">
-          <article class="post-card">
-            <div class="post-cover"></div>
-            <div class="post-body">
-              <div class="post-meta">2026年3月 · 生活记录</div>
-              <h3>第一篇文章：为什么开始写博客</h3>
-              <p>用简单的文字，记录每天的思考、学习和变化，让内容慢慢长成自己的风格。</p>
-              <div class="tags">
-                <span class="tag">记录</span>
-                <span class="tag">成长</span>
+          <article class="post">
+            <div class="cover">
+              <div class="constellation">
+                <span class="star" style="left:16%;top:28%"></span>
+                <span class="star" style="left:38%;top:20%;animation-delay:-1s"></span>
+                <span class="star" style="left:60%;top:34%;animation-delay:-2s"></span>
+                <span class="star" style="left:78%;top:22%;animation-delay:-1.4s"></span>
+                <span class="line" style="left:18%;top:31%;width:24%;transform:rotate(12deg)"></span>
+                <span class="line" style="left:40%;top:23%;width:22%;transform:rotate(18deg)"></span>
+                <span class="line" style="left:62%;top:36%;width:18%;transform:rotate(-10deg)"></span>
               </div>
+            </div>
+            <div class="post-body">
+              <div class="meta">2026 · 叙事</div>
+              <h3>第一章：星港之上，信号仍在回响</h3>
+              <p>把每一篇文章都写成一段航行记录，让博客像一部缓慢展开的宇宙史诗。</p>
+              <div class="tags"><span class="tag">史诗</span><span class="tag">记录</span></div>
             </div>
           </article>
 
-          <article class="post-card">
-            <div class="post-cover"></div>
-            <div class="post-body">
-              <div class="post-meta">2026年3月 · 学习笔记</div>
-              <h3>第二篇文章：如何整理你的知识库</h3>
-              <p>把零散的信息整理成清晰结构，写成自己能长期复用的笔记体系。</p>
-              <div class="tags">
-                <span class="tag">学习</span>
-                <span class="tag">笔记</span>
+          <article class="post">
+            <div class="cover">
+              <div class="constellation">
+                <span class="star" style="left:22%;top:22%"></span>
+                <span class="star" style="left:52%;top:16%;animation-delay:-1.2s"></span>
+                <span class="star" style="left:73%;top:30%;animation-delay:-2.4s"></span>
+                <span class="star" style="left:33%;top:58%;animation-delay:-1.8s"></span>
+                <span class="line" style="left:24%;top:24%;width:30%;transform:rotate(-8deg)"></span>
+                <span class="line" style="left:54%;top:18%;width:22%;transform:rotate(10deg)"></span>
+                <span class="line" style="left:34%;top:57%;width:34%;transform:rotate(-14deg)"></span>
               </div>
+            </div>
+            <div class="post-body">
+              <div class="meta">2026 · 笔记</div>
+              <h3>如何做出“像宇宙在呼吸”的页面</h3>
+              <p>用背景渐变、星点漂移、轻微光晕和悬浮卡片，制造一种安静的深空感。</p>
+              <div class="tags"><span class="tag">视觉</span><span class="tag">动效</span></div>
             </div>
           </article>
 
-          <article class="post-card">
-            <div class="post-cover"></div>
-            <div class="post-body">
-              <div class="post-meta">2026年3月 · 技术分享</div>
-              <h3>第三篇文章：GitHub Pages 部署入门</h3>
-              <p>把静态站点上传到 GitHub，开启 Pages 后就能得到自己的博客地址。</p>
-              <div class="tags">
-                <span class="tag">部署</span>
-                <span class="tag">GitHub</span>
+          <article class="post">
+            <div class="cover">
+              <div class="constellation">
+                <span class="star" style="left:18%;top:34%"></span>
+                <span class="star" style="left:41%;top:18%;animation-delay:-1.1s"></span>
+                <span class="star" style="left:65%;top:28%;animation-delay:-2.2s"></span>
+                <span class="star" style="left:80%;top:52%;animation-delay:-1.6s"></span>
+                <span class="line" style="left:20%;top:35%;width:23%;transform:rotate(14deg)"></span>
+                <span class="line" style="left:43%;top:20%;width:26%;transform:rotate(8deg)"></span>
+                <span class="line" style="left:66%;top:29%;width:20%;transform:rotate(20deg)"></span>
               </div>
+            </div>
+            <div class="post-body">
+              <div class="meta">2026 · 部署</div>
+              <h3>把星空主页部署到 GitHub Pages</h3>
+              <p>只需要 index.html 就能上线，之后再逐步增加文章页、分类页和独立封面。</p>
+              <div class="tags"><span class="tag">GitHub</span><span class="tag">静态站点</span></div>
             </div>
           </article>
         </div>
@@ -423,44 +596,51 @@
     </section>
 
     <section id="about">
-      <div class="section-card">
-        <div class="section-title">
-          <h2>关于这个博客</h2>
-          <span>适合个人主页、文章首页、作品展示</span>
+      <div class="panel section">
+        <div class="head">
+          <h2>星图设定</h2>
+          <span>奇怪的ai解释</span>
         </div>
 
-        <div class="about-grid">
-          <div class="about-box">
-            <h3>简洁</h3>
-            <p>没有复杂依赖，结构直观，打开就能用。你可以继续加分类、分页、侧边栏和文章详情页。</p>
+        <div class="about">
+          <div class="box">
+            <h3>氛围关键词</h3>
+            <p>
+              星空、远航、遗迹、低语、光轨、尘埃与深空回声。
+              整体不是“科技感”，而是“神话感”。
+            </p>
           </div>
-          <div class="about-box">
-            <h3>响应式</h3>
-            <p>手机、平板、电脑都能正常显示。布局会自动适应屏幕大小。</p>
+          <div class="box">
+            <h3>页面构成</h3>
+            <div class="timeline">
+              <div class="item">首页：宇宙封面、主标题、状态面板。</div>
+              <div class="item">文章页：像星图碎片一样独立存在。</div>
+              <div class="item">关于页：像航行日志或纪年档案。</div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <section id="contact">
-      <div class="section-card">
-        <div class="section-title">
-          <h2>联系我</h2>
-          <span>这里可以换成你的邮箱、社交主页或 GitHub</span>
+      <div class="panel section">
+        <div class="head">
+          <h2>坐标</h2>
+          <span></span>
         </div>
-        <div class="about-box">
-          <p style="margin:0; color: var(--muted);">
-            Email: yourname@example.com<br />
-            GitHub: your-github-name<br />
-            Blog: https://yourname.github.io/
+        <div class="box">
+          <p style="margin:0;color:var(--muted);">
+            GitHub: <a href="https://github.com/Ark-303" class="site-link">Ark-303</a><br/>
+            Email: <a href="mailto:jinshihuabei@gmail.com?subject=来自博客的留言&body=你好，我是……。"class="site-link">jinshihuabei@gmail.com (不常看)</a><br/>
+            QQ: <a href="https://qm.qq.com/q/DxK7ohs2qW" class="site-link">3769844484（外交事务）</a> <br/>
+            X: <a href="https://x.com/IN_LIFE_D" class="site-link">@IN_LIFE_D</a><br/>
+            Bluesky: <a href="https://bsky.app/profile/in_life_d.bsky.social" class="site-link">in_life_d.bsky.social</a>
           </p>
         </div>
       </div>
     </section>
   </main>
 
-  <footer>
-    © 2026 我的博客 · Powered by HTML & CSS
-  </footer>
+  <footer>© 2026 StellarMyth · HTML + CSS</footer>
 </body>
 </html>
