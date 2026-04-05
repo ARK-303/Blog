@@ -473,6 +473,23 @@
       border-bottom-color: var(--gold);
       text-shadow: 0 0 10px rgba(247, 211, 138, 0.45);
     }
+
+    .h_jump {
+      text-decoration: none;
+      transition: color 0.25s ease, text-shadow 0.25s ease;
+    }
+
+    .h_jump:hover {
+      color: var(--gold);
+      text-shadow: 0 0 10px rgba(247, 211, 138, 0.45);
+    }
+
+    .post-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
@@ -527,71 +544,10 @@
     <section id="posts">
       <div class="panel section">
         <div class="head">
-          <h2>最新篇章</h2>
+          <h2><a href="post_list.html"class="h_jump">文章目录</a></h2>
           <span>会写的会写的（小声）</span>
         </div>
-
-        <div class="posts">
-          <article class="post">
-            <div class="cover">
-              <div class="constellation">
-                <span class="star" style="left:16%;top:28%"></span>
-                <span class="star" style="left:38%;top:20%;animation-delay:-1s"></span>
-                <span class="star" style="left:60%;top:34%;animation-delay:-2s"></span>
-                <span class="star" style="left:78%;top:22%;animation-delay:-1.4s"></span>
-                <span class="line" style="left:18%;top:31%;width:24%;transform:rotate(12deg)"></span>
-                <span class="line" style="left:40%;top:23%;width:22%;transform:rotate(18deg)"></span>
-                <span class="line" style="left:62%;top:36%;width:18%;transform:rotate(-10deg)"></span>
-              </div>
-            </div>
-            <div class="post-body">
-              <div class="meta">2026 · 叙事</div>
-              <h3>第一章：星港之上，信号仍在回响</h3>
-              <p>把每一篇文章都写成一段航行记录，让博客像一部缓慢展开的宇宙史诗。</p>
-              <div class="tags"><span class="tag">史诗</span><span class="tag">记录</span></div>
-            </div>
-          </article>
-
-          <article class="post">
-            <div class="cover">
-              <div class="constellation">
-                <span class="star" style="left:22%;top:22%"></span>
-                <span class="star" style="left:52%;top:16%;animation-delay:-1.2s"></span>
-                <span class="star" style="left:73%;top:30%;animation-delay:-2.4s"></span>
-                <span class="star" style="left:33%;top:58%;animation-delay:-1.8s"></span>
-                <span class="line" style="left:24%;top:24%;width:30%;transform:rotate(-8deg)"></span>
-                <span class="line" style="left:54%;top:18%;width:22%;transform:rotate(10deg)"></span>
-                <span class="line" style="left:34%;top:57%;width:34%;transform:rotate(-14deg)"></span>
-              </div>
-            </div>
-            <div class="post-body">
-              <div class="meta">2026 · 笔记</div>
-              <h3>如何做出“像宇宙在呼吸”的页面</h3>
-              <p>用背景渐变、星点漂移、轻微光晕和悬浮卡片，制造一种安静的深空感。</p>
-              <div class="tags"><span class="tag">视觉</span><span class="tag">动效</span></div>
-            </div>
-          </article>
-
-          <article class="post">
-            <div class="cover">
-              <div class="constellation">
-                <span class="star" style="left:18%;top:34%"></span>
-                <span class="star" style="left:41%;top:18%;animation-delay:-1.1s"></span>
-                <span class="star" style="left:65%;top:28%;animation-delay:-2.2s"></span>
-                <span class="star" style="left:80%;top:52%;animation-delay:-1.6s"></span>
-                <span class="line" style="left:20%;top:35%;width:23%;transform:rotate(14deg)"></span>
-                <span class="line" style="left:43%;top:20%;width:26%;transform:rotate(8deg)"></span>
-                <span class="line" style="left:66%;top:29%;width:20%;transform:rotate(20deg)"></span>
-              </div>
-            </div>
-            <div class="post-body">
-              <div class="meta">2026 · 部署</div>
-              <h3>把星空主页部署到 GitHub Pages</h3>
-              <p>只需要 index.html 就能上线，之后再逐步增加文章页、分类页和独立封面。</p>
-              <div class="tags"><span class="tag">GitHub</span><span class="tag">静态站点</span></div>
-            </div>
-          </article>
-        </div>
+        <div id="latestPosts" class="posts"></div>
       </div>
     </section>
 
@@ -626,7 +582,7 @@
       <div class="panel section">
         <div class="head">
           <h2>坐标</h2>
-          <span></span>
+          <span>点击跳转</span>
         </div>
         <div class="box">
           <p style="margin:0;color:var(--muted);">
@@ -642,5 +598,66 @@
   </main>
 
   <footer>© 2026 StellarMyth · HTML + CSS</footer>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const articles = [
+      {
+        title: '示例文章',
+        date: '2026-04-05',
+        category: '示例',
+        excerpt: '文章的范本，保存用。',
+        tags: ['网页', '示例'],
+        href: 'post_example.html'
+      },
+      {
+        title: '第一篇文章',
+        date: '2026-04-06',
+        category: '自我介绍',
+        excerpt: '大致自我介绍一下吧。姑且说点什么。',
+        tags: ['叙事', '自我介绍'],
+        href: 'post_2026_04_06.html'
+      },
+    ];
+
+    const stars = [
+      `<span class="star" style="left:16%;top:28%"></span>`,
+      `<span class="star" style="left:38%;top:20%;animation-delay:-1s"></span>`,
+      `<span class="star" style="left:60%;top:34%;animation-delay:-2s"></span>`,
+      `<span class="star" style="left:78%;top:22%;animation-delay:-1.4s"></span>`,
+      `<span class="line" style="left:18%;top:31%;width:24%;transform:rotate(12deg)"></span>`,
+      `<span class="line" style="left:40%;top:23%;width:22%;transform:rotate(18deg)"></span>`,
+      `<span class="line" style="left:62%;top:36%;width:18%;transform:rotate(-10deg)"></span>`
+    ].join('');
+
+
+    const latestPosts = document.getElementById("latestPosts");
+    if (!latestPosts) return;
+
+    const top3 = [...articles]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 3);
+
+    latestPosts.innerHTML = top3.map(article => `
+      <article class="post">
+        <a class="post-link" href="${article.href}">
+          <div class="cover">
+            <div class="constellation">
+            ${stars}
+            </div>
+          </div>
+          <div class="post-body">
+            <div class="post-meta">${article.date} · ${article.category}</div>
+            <h3>${article.title}</h3>
+            <p>${article.excerpt}</p>
+            <div class="tags">
+              ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+            </div>
+          </div>
+        </a>
+      </article>
+    `).join("");
+  });
+</script>
 </body>
 </html>

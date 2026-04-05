@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ark-303的博客：文章目录</title>
+  <meta name="description" content="一个与星空史诗风格统一的文章目录页，支持标签筛选、标签忽略、时间排序与数字跳转。" />
+  <style>
+    :root{
+      --bg:#040611;
+      --bg2:#07101f;
+      --panel:rgba(10,16,29,.72);
+      --line:rgba(185,210,255,.15);
+      --text:#eef4ff;
+      --muted:#98a7c2;
+      --blue:#79b8ff;
+      --violet:#b78cff;
+      --gold:#f7d38a;
+      --shadow:0 22px 70px rgba(0,0,0,.5);
+      --radius:24px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      background:
+        radial-gradient(circle at 20% 18%, rgba(121,184,255,.14), transparent 24%),
+        radial-gradient(circle at 80% 12%, rgba(183,140,255,.12), transparent 22%),
+        radial-gradient(circle at 50% 82%, rgba(247,211,138,.08), transparent 22%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        radial-gradient(circle at 12px 16px, rgba(255,255,255,.9) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 40px 56px, rgba(255,255,255,.6) 0 1px, transparent 1.6px);
+      background-size:72px 72px;
+      opacity:.28;
+      z-index:0;
+      animation: starDrift 120s linear infinite;
+    }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:linear-gradient(180deg, transparent 0%, rgba(121,184,255,.05) 50%, transparent 100%);
+      opacity:.35;
+      z-index:0;
+    }
+
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit}
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      width:min(calc(100% - 32px), var(--max));
+      margin:0 auto;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter:blur(18px);
+      background:rgba(4,6,17,.66);
+      border-bottom:1px solid rgba(185,210,255,.12);
+    }
+
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:18px 0;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+    }
+
+    .sigil{
+      width:18px;height:18px;border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #fff, var(--blue) 45%, transparent 72%);
+      box-shadow:0 0 22px rgba(121,184,255,.8), 0 0 42px rgba(183,140,255,.35);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .nav-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:22px;
+      color:var(--muted);
+      font-size:.96rem;
+    }
+
+    .nav-links a{
+      position:relative;
+      transition:.2s ease;
+    }
+
+    .nav-links a::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:-4px;
+      width:0;
+      height:1px;
+      background:linear-gradient(90deg,var(--blue),var(--violet),var(--gold));
+      transition:width .25s ease;
+    }
+
+    .nav-links a:hover{color:#fff}
+    .nav-links a:hover::after{width:100%}
+
+    .page{
+      padding:34px 0 48px;
+    }
+
+    .hero{
+      margin-top:18px;
+      border-radius:var(--radius);
+      border:1px solid rgba(185,210,255,.14);
+      background:linear-gradient(180deg, rgba(13,20,36,.88), rgba(8,12,24,.68));
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.08) 50%, transparent 100%);
+      transform:translateX(-120%);
+      animation:sweep 9s ease-in-out infinite;
+      pointer-events:none;
+    }
+
+    .hero-top{
+      min-height:220px;
+      padding:44px 42px 34px;
+      display:flex;
+      flex-direction:column;
+      justify-content:end;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(121,184,255,.16), transparent 24%),
+        radial-gradient(circle at 80% 30%, rgba(183,140,255,.12), transparent 22%),
+        radial-gradient(circle at 50% 80%, rgba(247,211,138,.09), transparent 24%),
+        linear-gradient(180deg, rgba(7,12,24,.3), rgba(7,12,24,.86));
+      position:relative;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      width:fit-content;
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(121,184,255,.22);
+      background:rgba(121,184,255,.08);
+      color:#d8e8ff;
+      font-size:.88rem;
+      font-weight:700;
+      margin-bottom:16px;
+    }
+
+    .badge i{
+      width:8px;height:8px;border-radius:999px;
+      background:var(--gold);
+      box-shadow:0 0 14px rgba(247,211,138,.9);
+      display:inline-block;
+    }
+
+    h1{
+      margin:0 0 14px;
+      font-size:clamp(2.1rem, 4.5vw, 4.4rem);
+      line-height:1.03;
+      letter-spacing:-.06em;
+      max-width:14ch;
+    }
+
+    .star-text{
+      background:linear-gradient(90deg,#fff, var(--blue) 35%, #e8d4ff 60%, var(--gold));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      position:relative;
+      display:inline-block;
+    }
+
+    .star-text::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:.08em;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+      opacity:.7;
+      animation: shimmer 5s ease-in-out infinite;
+    }
+
+    .subhead{
+      margin:0;
+      max-width:76ch;
+      color:var(--muted);
+      line-height:1.85;
+      font-size:1.02rem;
+    }
+
+    .toolbar{
+      display:grid;
+      grid-template-columns:1.1fr 1fr .9fr;
+      gap:18px;
+      margin-top:18px;
+      align-items:start;
+    }
+
+    .panel{
+      border-radius:var(--radius);
+      border:1px solid rgba(185,210,255,.14);
+      background:linear-gradient(180deg, rgba(12,19,34,.88), rgba(12,19,34,.58));
+      box-shadow:0 16px 36px rgba(0,0,0,.24);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:linear-gradient(120deg, transparent 0%, rgba(255,255,255,.06) 50%, transparent 100%);
+      transform:translateX(-120%);
+      animation:sweep 11s ease-in-out infinite;
+      pointer-events:none;
+    }
+
+    .control{
+      padding:20px;
+    }
+
+    .control h2{
+      margin:0 0 14px;
+      font-size:1.02rem;
+      letter-spacing:-.02em;
+    }
+
+    .control p{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.7;
+    }
+
+    .chip-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .chip-btn{
+      border:1px solid rgba(185,210,255,.14);
+      background:rgba(12,19,34,.55);
+      color:var(--muted);
+      border-radius:999px;
+      padding:9px 12px;
+      cursor:pointer;
+      transition:.22s ease;
+      user-select:none;
+    }
+
+    .chip-btn:hover{
+      transform:translateY(-1px);
+      color:#fff;
+      border-color:rgba(121,184,255,.24);
+    }
+
+    .chip-btn.active.include{
+      color:#09111d;
+      background:linear-gradient(135deg, var(--blue), var(--gold));
+      border-color:transparent;
+    }
+
+    .chip-btn.active.exclude{
+      color:#fff;
+      background:rgba(247,211,138,.14);
+      border-color:rgba(247,211,138,.28);
+      box-shadow:0 0 0 1px rgba(247,211,138,.08) inset;
+    }
+
+    .sort-row{
+      display:grid;
+      gap:10px;
+    }
+
+    .select, .jump-input{
+      width:100%;
+      border-radius:16px;
+      border:1px solid rgba(185,210,255,.14);
+      background:rgba(7,12,24,.72);
+      color:var(--text);
+      padding:12px 14px;
+      outline:none;
+      transition:border-color .2s ease, transform .2s ease;
+    }
+
+    .select:focus, .jump-input:focus{
+      border-color:rgba(121,184,255,.34);
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:.9rem;
+      line-height:1.6;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .stat{
+      padding:14px;
+      border-radius:18px;
+      border:1px solid rgba(185,210,255,.12);
+      background:rgba(7,12,24,.55);
+    }
+
+    .stat strong{
+      display:block;
+      margin-bottom:4px;
+      font-size:1.15rem;
+      background:linear-gradient(90deg,#fff,var(--blue),var(--violet),var(--gold));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .stat span{color:var(--muted);font-size:.92rem}
+
+    .article-list{
+      margin-top:18px;
+      display:grid;
+      gap:16px;
+    }
+
+    .article-card{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:0;
+      border-radius:22px;
+      border:1px solid rgba(185,210,255,.14);
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(13,20,36,.95), rgba(7,10,18,.92));
+      box-shadow:0 16px 36px rgba(0,0,0,.24);
+      transition:transform .28s ease, border-color .28s ease, box-shadow .28s ease;
+    }
+
+    .article-card:hover{
+      transform:translateY(-4px);
+      border-color:rgba(121,184,255,.26);
+      box-shadow:0 20px 48px rgba(0,0,0,.34);
+    }
+
+    .cover{
+      min-height:180px;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(121,184,255,.95), transparent 22%),
+        radial-gradient(circle at 78% 20%, rgba(183,140,255,.8), transparent 24%),
+        radial-gradient(circle at 50% 82%, rgba(247,211,138,.75), transparent 26%),
+        linear-gradient(135deg, #09101d, #05070f 60%, #020308);
+    }
+
+    .cover::before{
+      content:"";
+      position:absolute;
+      inset:-25%;
+      background:conic-gradient(from 180deg, transparent, rgba(255,255,255,.10), transparent 35%);
+      animation: rotate 14s linear infinite;
+      opacity:.7;
+    }
+
+    .cover::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,.04), rgba(0,0,0,.2)),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.1), transparent 42%);
+      opacity:.5;
+    }
+
+    .constellation{
+      position:absolute;
+      inset:0;
+      opacity:.75;
+    }
+
+    .star{
+      position:absolute;
+      width:4px;height:4px;border-radius:50%;
+      background:#fff;
+      box-shadow:0 0 10px rgba(255,255,255,.9);
+      animation: twinkle 3.5s ease-in-out infinite;
+    }
+
+    .line{
+      position:absolute;
+      height:1px;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      transform-origin:left center;
+      opacity:.6;
+    }
+
+    .body{
+      padding:18px 18px 20px;
+    }
+
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:10px;
+      color:#a3b5d8;
+      font-size:.85rem;
+    }
+
+    .meta-pill{
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(185,210,255,.12);
+      background:rgba(12,19,34,.5);
+    }
+
+    .body h3{
+      margin:0 0 10px;
+      font-size:1.15rem;
+      line-height:1.4;
+      letter-spacing:-.03em;
+    }
+
+    .body p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.8;
+      font-size:.96rem;
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .tag{
+      font-size:.8rem;
+      padding:5px 10px;
+      border-radius:999px;
+      color:#d6e4ff;
+      border:1px solid rgba(121,184,255,.18);
+      background:rgba(121,184,255,.08);
+    }
+
+    .tag.note{background:rgba(247,211,138,.08); border-color:rgba(247,211,138,.18)}
+
+    .empty-state{
+      padding:30px 22px;
+      text-align:center;
+      color:var(--muted);
+      border-radius:22px;
+      border:1px dashed rgba(185,210,255,.18);
+      background:rgba(12,19,34,.45);
+    }
+
+    .pagination-panel{
+      margin-top:18px;
+      padding:18px 20px 20px;
+    }
+
+    .pagination-top{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+
+    .pagination-info{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .pagination-controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+    }
+
+    .page-btn{
+      border:1px solid rgba(185,210,255,.14);
+      background:rgba(7,12,24,.72);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      transition:.2s ease;
+      min-width:42px;
+      text-align:center;
+    }
+
+    .page-btn:hover{
+      border-color:rgba(121,184,255,.24);
+      transform:translateY(-1px);
+    }
+
+    .page-btn.active{
+      background:linear-gradient(135deg,var(--blue),var(--gold));
+      color:#09111d;
+      border-color:transparent;
+      font-weight:800;
+    }
+
+    .page-jump{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .page-jump label{color:var(--muted); font-size:.94rem}
+
+    .jump-input{
+      width:120px;
+      padding:11px 12px;
+    }
+
+    .jump-btn{
+      border:1px solid rgba(185,210,255,.14);
+      background:linear-gradient(135deg,var(--blue),var(--gold));
+      color:#09111d;
+      border-radius:12px;
+      padding:11px 14px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.22s ease;
+    }
+
+    .jump-btn:hover{transform:translateY(-1px)}
+
+    footer{
+      padding:30px 0 54px;
+      color:var(--muted);
+      text-align:center;
+      font-size:.95rem;
+    }
+
+    .nebula{
+      position:fixed;
+      pointer-events:none;
+      border-radius:999px;
+      filter:blur(10px);
+      opacity:.55;
+      z-index:0;
+    }
+    .n1{width:280px;height:280px;left:-90px;top:16%;background:rgba(121,184,255,.10);animation: drift 18s ease-in-out infinite}
+    .n2{width:340px;height:340px;right:-140px;top:38%;background:rgba(183,140,255,.08);animation: drift 22s ease-in-out infinite reverse}
+    .n3{width:220px;height:220px;left:16%;bottom:-70px;background:rgba(247,211,138,.08);animation: drift 16s ease-in-out infinite}
+
+    @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.28);opacity:.76}}
+    @keyframes sweep{0%,45%{transform:translateX(-120%);opacity:0}55%{opacity:1}100%{transform:translateX(120%);opacity:0}}
+    @keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes drift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(18px,-16px,0) scale(1.08)}}
+    @keyframes shimmer{0%,100%{opacity:.3;transform:scaleX(.82)}50%{opacity:.95;transform:scaleX(1.08)}}
+    @keyframes twinkle{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+    @keyframes starDrift{from{transform:translateY(0)}to{transform:translateY(-220px)}}
+
+    @media (max-width: 980px){
+      .toolbar{grid-template-columns:1fr}
+      .article-card{grid-template-columns:1fr}
+    }
+
+    @media (max-width: 640px){
+      .nav{flex-direction:column;align-items:flex-start}
+      .hero-top,.control,.pagination-panel{padding:22px}
+      .article-card{grid-template-columns:1fr}
+      .cover{min-height:160px}
+      h1{max-width:none}
+      .pagination-top{align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+  <div class="nebula n1"></div>
+  <div class="nebula n2"></div>
+  <div class="nebula n3"></div>
+
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <span class="sigil"></span>
+        <div>Stellar<span style="color:var(--blue)">Myth</span></div>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="post_example.html">示例文章</a>
+        <a href="#list">目录</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <section class="hero panel">
+      <div class="hero-top">
+        <div class="badge"><i></i> ARTICLE ARCHIVE // CATALOG</div>
+        <h1><span class="star-text">文章目录</span><br/>在星图中检索篇章。</h1>
+        <p class="subhead">
+          这里是文章目录页。你可以按标签筛选、忽略指定标签，切换时间顺序，默认显示全部内容，
+          并通过数字分页快速跳转到指定页面。
+        </p>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="panel control">
+        <h2>按标签查找</h2>
+        <p></p>
+        <div id="includeTags" class="chip-list"></div>
+      </div>
+
+      <div class="panel control">
+        <h2>忽略标签</h2>
+        <p></p>
+        <div id="excludeTags" class="chip-list"></div>
+      </div>
+
+      <div class="panel control">
+        <h2>排序与概览</h2>
+        <div class="sort-row">
+          <select id="sortSelect" class="select">
+            <option value="newest">时间排序：从后往前（新的在前）</option>
+            <option value="oldest">时间排序：从前往后（旧的在前）</option>
+          </select>
+          <div class="stats-grid">
+            <div class="stat"><strong id="totalCount">0</strong><span>篇文章</span></div>
+            <div class="stat"><strong id="currentCount">0</strong><span>当前页显示</span></div>
+          </div>
+          <div class="hint"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="list" class="panel pagination-panel">
+      <div class="pagination-top">
+        <div class="pagination-info" id="paginationInfo">正在加载目录……</div>
+        <div class="pagination-controls" id="paginationControls"></div>
+      </div>
+
+      <div class="page-jump">
+        <label for="pageInput">输入页码跳转：</label>
+        <input id="pageInput" class="jump-input" type="number" min="1" value="1" />
+        <button id="jumpBtn" class="jump-btn" type="button">跳转</button>
+      </div>
+    </section>
+
+    <section id="articleList" class="article-list"></section>
+  </main>
+
+  <footer>© 2026 StellarMyth · Archive Page</footer>
+
+  <script>
+    const articles = [
+      {
+        title: '示例文章',
+        date: '2026-04-05',
+        category: '示例',
+        excerpt: '文章的范本，保存用。',
+        tags: ['网页', '示例'],
+        href: 'post_example.html'
+      },
+      {
+        title: '第一篇文章',
+        date: '2026-04-06',
+        category: '自我介绍',
+        excerpt: '大致自我介绍一下吧。姑且说点什么。',
+        tags: ['叙事', '自我介绍'],
+        href: 'post_2026_04_06.html'
+      },
+    ];
+
+    const state = {
+      include: new Set(),
+      exclude: new Set(),
+      sort: 'newest',
+      page: 1,
+      perPage: 3,
+      tagMode: 'all'
+    };
+
+    const tagPool = [...new Set(articles.flatMap(a => a.tags))].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'));
+
+    const includeTagsEl = document.getElementById('includeTags');
+    const excludeTagsEl = document.getElementById('excludeTags');
+    const sortSelect = document.getElementById('sortSelect');
+    const articleListEl = document.getElementById('articleList');
+    const paginationInfoEl = document.getElementById('paginationInfo');
+    const paginationControlsEl = document.getElementById('paginationControls');
+    const pageInputEl = document.getElementById('pageInput');
+    const jumpBtn = document.getElementById('jumpBtn');
+    const totalCountEl = document.getElementById('totalCount');
+    const currentCountEl = document.getElementById('currentCount');
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    }
+
+    function buildTagButton(tag, mode) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip-btn';
+      btn.textContent = tag;
+      btn.dataset.tag = tag;
+      btn.dataset.mode = mode;
+      btn.addEventListener('click', () => {
+        const target = mode === 'include' ? state.include : state.exclude;
+        if (tag === '全部') {
+          if (mode === 'include') state.include.clear();
+          render();
+          return;
+        }
+        if (target.has(tag)) target.delete(tag);
+        else target.add(tag);
+        if (mode === 'include') {
+          state.tagMode = state.include.size ? 'include' : 'all';
+        }
+        render();
+      });
+      return btn;
+    }
+
+    function renderTagButtons() {
+      includeTagsEl.innerHTML = '';
+      excludeTagsEl.innerHTML = '';
+
+      const allBtn = buildTagButton('全部', 'include');
+      allBtn.classList.add('active', 'include');
+      includeTagsEl.appendChild(allBtn);
+
+      tagPool.forEach(tag => {
+        includeTagsEl.appendChild(buildTagButton(tag, 'include'));
+        excludeTagsEl.appendChild(buildTagButton(tag, 'exclude'));
+      });
+    }
+
+    function updateTagButtonStates() {
+      [...includeTagsEl.querySelectorAll('.chip-btn')].forEach(btn => {
+        const tag = btn.dataset.tag;
+        if (tag === '全部') {
+          btn.classList.toggle('active', state.include.size === 0);
+          btn.classList.toggle('include', state.include.size === 0);
+          return;
+        }
+        btn.classList.toggle('active', state.include.has(tag));
+        btn.classList.toggle('include', state.include.has(tag));
+      });
+
+      [...excludeTagsEl.querySelectorAll('.chip-btn')].forEach(btn => {
+        const tag = btn.dataset.tag;
+        btn.classList.toggle('active', state.exclude.has(tag));
+        btn.classList.toggle('exclude', state.exclude.has(tag));
+      });
+    }
+
+    function filteredArticles() {
+      let items = [...articles];
+
+      if (state.include.size > 0) {
+        items = items.filter(article => [...state.include].every(tag => article.tags.includes(tag)));
+      }
+
+      if (state.exclude.size > 0) {
+        items = items.filter(article => ![...state.exclude].some(tag => article.tags.includes(tag)));
+      }
+
+      items.sort((a, b) => {
+        const diff = new Date(a.date) - new Date(b.date);
+        return state.sort === 'newest' ? -diff : diff;
+      });
+
+      return items;
+    }
+
+    function renderPagination(totalPages) {
+      paginationControlsEl.innerHTML = '';
+
+      const makeBtn = (label, page, disabled = false, active = false) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'page-btn';
+        if (active) btn.classList.add('active');
+        btn.textContent = label;
+        btn.disabled = disabled;
+        btn.addEventListener('click', () => {
+          if (!disabled) {
+            state.page = page;
+            render();
+            window.scrollTo({ top: document.getElementById('list').offsetTop - 82, behavior: 'smooth' });
+          }
+        });
+        return btn;
+      };
+
+      paginationControlsEl.appendChild(makeBtn('‹', Math.max(1, state.page - 1), state.page === 1));
+
+      for (let i = 1; i <= totalPages; i++) {
+        paginationControlsEl.appendChild(makeBtn(String(i), i, false, i === state.page));
+      }
+
+      paginationControlsEl.appendChild(makeBtn('›', Math.min(totalPages, state.page + 1), state.page === totalPages));
+    }
+
+    function renderCards(pageItems) {
+      if (pageItems.length === 0) {
+        articleListEl.innerHTML = `
+          <div class="empty-state panel">
+            当前筛选条件下没有文章。你可以清除某些标签，或者切换排序后再看。
+          </div>
+        `;
+        return;
+      }
+
+      articleListEl.innerHTML = pageItems.map((article, index) => {
+        const stars = [
+          `<span class="star" style="left:16%;top:28%"></span>`,
+          `<span class="star" style="left:38%;top:20%;animation-delay:-1s"></span>`,
+          `<span class="star" style="left:60%;top:34%;animation-delay:-2s"></span>`,
+          `<span class="star" style="left:78%;top:22%;animation-delay:-1.4s"></span>`,
+          `<span class="line" style="left:18%;top:31%;width:24%;transform:rotate(12deg)"></span>`,
+          `<span class="line" style="left:40%;top:23%;width:22%;transform:rotate(18deg)"></span>`,
+          `<span class="line" style="left:62%;top:36%;width:18%;transform:rotate(-10deg)"></span>`
+        ].join('');
+
+        return `
+          <article class="article-card">
+            <a class="cover" href="${article.href}" aria-label="打开文章：${article.title}">
+              <div class="constellation">${stars}</div>
+            </a>
+            <div class="body">
+              <div class="meta-row">
+                <span class="meta-pill">${formatDate(article.date)}</span>
+                <span class="meta-pill">${article.category}</span>
+                <span class="meta-pill">第 ${((state.page - 1) * state.perPage) + index + 1} 篇</span>
+              </div>
+              <h3><a href="${article.href}">${article.title}</a></h3>
+              <p>${article.excerpt}</p>
+              <div class="tags">
+                ${article.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function render() {
+      updateTagButtonStates();
+      sortSelect.value = state.sort;
+
+      const items = filteredArticles();
+      const total = items.length;
+      const totalPages = Math.max(1, Math.ceil(total / state.perPage));
+      if (state.page > totalPages) state.page = totalPages;
+
+      const start = (state.page - 1) * state.perPage;
+      const pageItems = items.slice(start, start + state.perPage);
+
+      totalCountEl.textContent = String(total);
+      currentCountEl.textContent = String(pageItems.length);
+      paginationInfoEl.textContent = total === 0
+        ? '共 0 篇文章，当前没有可显示内容。'
+        : `共 ${total} 篇文章，当前第 ${state.page} / ${totalPages} 页，默认新的在前。`;
+
+      renderCards(pageItems);
+      renderPagination(totalPages);
+      pageInputEl.value = String(state.page);
+    }
+
+    sortSelect.addEventListener('change', () => {
+      state.sort = sortSelect.value;
+      state.page = 1;
+      render();
+    });
+
+    jumpBtn.addEventListener('click', () => {
+      const target = Number(pageInputEl.value);
+      const totalPages = Math.max(1, Math.ceil(filteredArticles().length / state.perPage));
+      if (!Number.isFinite(target)) return;
+      state.page = Math.min(Math.max(1, target), totalPages);
+      render();
+      window.scrollTo({ top: document.getElementById('list').offsetTop - 82, behavior: 'smooth' });
+    });
+
+    pageInputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') jumpBtn.click();
+    });
+
+    renderTagButtons();
+    render();
+  </script>
+</body>
+</html>
