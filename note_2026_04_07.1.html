@@ -562,8 +562,27 @@
       background:rgba(247,211,138,.10);
       box-shadow:0 0 0 1px rgba(247,211,138,.08) inset;
     }
+    @media (max-width: 980px) {
+    .progress-wrap {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      margin-top: 0;
+      padding: 0 16px;
+      background: rgba(4, 6, 17, 0.72);
+      backdrop-filter: blur(14px);
+    }
 
+    .progress-shell {
+      margin-top: 0;
+    }
 
+    .page {
+      padding-top: 56px;
+    }
+  }
   </style>
 </head>
 <body>
